@@ -1,9 +1,19 @@
 #!/bin/bash
 
+set -o errexit -o nounset -o pipefail
+
+sudo docker rm checkenvironment || true
+
+# Disable CGO to avoid any dynamic dependency on libc
+#
+# ref: https://www.arp242.net/static-go.html
+# ref: https://github.com/GoogleContainerTools/distroless/issues/58
+CGO_ENABLED=0 go build
+
 service docker status || {
   sudo service docker start
   sleep 1
 }
 
 sudo docker build . -t checkenvironment
-sudo docker run --rm -it checkenvironment
+sudo docker run --name=checkenvironment -it checkenvironment
