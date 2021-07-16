@@ -1,0 +1,9 @@
+#!/bin/bash
+
+service docker status || {
+  sudo service docker start
+  sleep 1
+}
+
+sudo docker build . -t checkenvironment
+sudo docker run --rm -it checkenvironment
