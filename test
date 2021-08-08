@@ -15,5 +15,5 @@ service docker status || {
   sleep 1
 }
 
-sudo docker build . -t checkenvironment
-sudo docker run --name=checkenvironment -it checkenvironment
+sudo docker build . --tag checkenvironment
+sudo docker run --name=checkenvironment --interactive --tty checkenvironment
