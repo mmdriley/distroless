@@ -7,15 +7,23 @@ import (
 )
 
 func main() {
-	if _, err := user.Current(); err != nil {
+	fail := false
+
+	// Fails unless one of:
+	//  - /etc/passwd exists and has a matching UID
+	//  - cgo is enabled
+	//  - $USER or $HOME is set
+	if currentUser, err := user.Current(); err == nil {
+		fmt.Printf("Current user: %v\n", currentUser.Username)
+	} else {
 		fmt.Printf("Could not get current user: %v\n", err)
-		return
+		fail = true
 	}
 
 	// Fails if /tmp does not exist
 	if _, err := os.MkdirTemp("", "checkenvironment"); err != nil {
 		fmt.Printf("Could not create temporary directory: %v\n", err)
-		return
+		fail = true
 	}
 
 	// if homedir, err := os.UserHomeDir(); err != nil {
@@ -41,5 +49,11 @@ func main() {
 	// 	return
 	// }
 
-	fmt.Printf("Everything is fine\n")
+	if fail {
+		fmt.Printf("===\nOne or more tests failed.\n")
+		os.Exit(0)
+	} else {
+		fmt.Printf("===\nEverything is fine.\n")
+		os.Exit(1)
+	}
 }
